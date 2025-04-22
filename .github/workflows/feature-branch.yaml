@@ -1,0 +1,41 @@
+name: '✅ 🚧 Test feature branch'
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!main'
+    paths-ignore:
+      - '.github/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  service-tests:
+    name: 'Run tests'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Update and upgrade apt-get
+        run: sudo apt-get update && sudo apt-get upgrade -y
+
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Set up JDK_21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Run build with Gradle Wrapper
+        run: ./gradlew build

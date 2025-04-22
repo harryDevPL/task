@@ -1,0 +1,58 @@
+server:
+  port: 8080
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/taskdb
+    username: user
+    password: password
+  sql:
+    init:
+      mode: always
+      platform: postgres
+  main:
+    reactive-web-application-type: servlet
+  application:
+    name: task-processor
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    enabled-by-default: true
+    web:
+      base-path: '/actuator'
+      exposure:
+        include:
+          - health
+          - metrics
+          - prometheus
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
+      show-details: always
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        http.server.requests: 5000ms
+    web:
+      server:
+        request:
+          autotime:
+            percentiles: 0.99
+    export:
+      prometheus:
+        enabled: true

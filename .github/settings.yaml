@@ -1,0 +1,11 @@
+_extends: .github
+
+repository:
+  name: task
+  description: Task processing service.
+
+branches:
+  - name: main
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 0
